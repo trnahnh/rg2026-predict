@@ -210,4 +210,8 @@ __marimo__/
 CLAUDE.md
 data/raw/
 models/
-outputs/
+outputs/*
+!outputs/win_probability_bar.png
+!outputs/calibration_curve.png
+!outputs/feature_importance.png
+!outputs/elo_trajectories_clay.png
