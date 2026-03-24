@@ -35,32 +35,32 @@ ATP match data (2000-2026)
         │
         ▼
 ┌─────────────────┐
-│  Data Pipeline   │  Fetch Sackmann (2000-24) + TML (2025-26)
-│  fetch + clean   │  Reconcile player IDs across sources
+│  Data Pipeline  │  Fetch Sackmann (2000-24) + TML (2025-26)
+│  fetch + clean  │  Reconcile player IDs across sources
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│   Elo Engine     │  Overall + surface-specific ratings
-│   75K matches    │  K=32 (new) → K=24 (established)
+│   Elo Engine    │  Overall + surface-specific ratings
+│   75K matches   │  K=32 (new) → K=24 (established)
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│   Features       │  37 features per player-match pair
-│   150K rows      │  Rolling form, H2H, serving, Elo, context
+│   Features      │  37 features per player-match pair
+│   150K rows     │  Rolling form, H2H, serving, Elo, context
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│   XGBoost        │  Optuna HPO (100 trials, expanding-window CV)
-│   + Calibration  │  Isotonic calibration on validation set
+│   XGBoost       │  Optuna HPO (100 trials, expanding-window CV)
+│   + Calibration │  Isotonic calibration on validation set
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│   Monte Carlo    │  128-player bracket, 10K simulations
-│   Simulation     │  Precomputed pairwise probability matrix
+│   Monte Carlo   │  128-player bracket, 10K simulations
+│   Simulation    │  Precomputed pairwise probability matrix
 └─────────────────┘
 ```
 
