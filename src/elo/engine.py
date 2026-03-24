@@ -91,7 +91,7 @@ def compute_elo_history(matches: pd.DataFrame) -> pd.DataFrame:
             players[lid] = PlayerElo()
 
         w = players[wid]
-        l = players[lid]
+        lo = players[lid]
 
         records.append({
             "match_idx": row.Index,
@@ -101,11 +101,11 @@ def compute_elo_history(matches: pd.DataFrame) -> pd.DataFrame:
             "loser_id": lid,
             "w_elo_overall": w.overall,
             "w_elo_surface": get_surface_elo(w, surface),
-            "l_elo_overall": l.overall,
-            "l_elo_surface": get_surface_elo(l, surface),
+            "l_elo_overall": lo.overall,
+            "l_elo_surface": get_surface_elo(lo, surface),
         })
 
-        update_ratings(w, l, surface)
+        update_ratings(w, lo, surface)
 
     return pd.DataFrame(records)
 

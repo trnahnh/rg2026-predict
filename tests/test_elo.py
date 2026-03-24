@@ -46,20 +46,20 @@ def test_k_factor_established_player():
 
 def test_winner_gains_loser_loses():
     w = PlayerElo()
-    l = PlayerElo()
-    w_before, l_before = w.overall, l.overall
-    update_ratings(w, l, "Clay")
+    lo = PlayerElo()
+    w_before, lo_before = w.overall, lo.overall
+    update_ratings(w, lo, "Clay")
     assert w.overall > w_before
-    assert l.overall < l_before
+    assert lo.overall < lo_before
 
 
 def test_elo_conservation_same_k():
     """When both players have same K, total Elo is conserved."""
     w = PlayerElo()
-    l = PlayerElo()
-    total_before = w.overall + l.overall
-    update_ratings(w, l, "Hard")
-    total_after = w.overall + l.overall
+    lo = PlayerElo()
+    total_before = w.overall + lo.overall
+    update_ratings(w, lo, "Hard")
+    total_after = w.overall + lo.overall
     assert abs(total_before - total_after) < 1e-10
 
 
@@ -67,8 +67,6 @@ def test_upset_produces_larger_change():
     """Lower-rated beating higher-rated causes bigger rating change than expected win."""
     favorite = PlayerElo(overall=1800.0)
     underdog = PlayerElo(overall=1400.0)
-    fav_before = favorite.overall
-
     normal_w = PlayerElo(overall=1800.0)
     normal_l = PlayerElo(overall=1400.0)
     update_ratings(normal_w, normal_l, "Hard")
@@ -128,10 +126,10 @@ def test_determinism(sample_matches):
 
 def test_match_count_increments():
     w = PlayerElo()
-    l = PlayerElo()
+    lo = PlayerElo()
     assert w.match_count == 0
-    update_ratings(w, l, "Clay")
+    update_ratings(w, lo, "Clay")
     assert w.match_count == 1
-    assert l.match_count == 1
-    update_ratings(w, l, "Hard")
+    assert lo.match_count == 1
+    update_ratings(w, lo, "Hard")
     assert w.match_count == 2
