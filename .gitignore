@@ -209,6 +209,8 @@ __marimo__/
 # Project-specific
 CLAUDE.md
 data/raw/
+data/processed/
+data/elo/
 models/
 outputs/*
 !outputs/win_probability_bar.png
