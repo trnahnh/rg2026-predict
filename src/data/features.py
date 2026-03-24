@@ -91,16 +91,12 @@ class FeatureBuilder:
     def _build_indices(self, melted: pd.DataFrame) -> None:
         self._player_data: dict[str, pd.DataFrame] = {}
         self._player_dates: dict[str, np.ndarray] = {}
-        self._h2h_data: dict[tuple[str, str], pd.DataFrame] = {}
         self._rg_data: dict[str, pd.DataFrame] = {}
 
         for pid, group in melted.groupby("player_id"):
             sorted_group = group.sort_values("tourney_date").reset_index(drop=True)
             self._player_data[pid] = sorted_group
             self._player_dates[pid] = sorted_group["tourney_date"].values
-
-        for (pid, oid), group in melted.groupby(["player_id", "opponent_id"]):
-            self._h2h_data[(pid, oid)] = group.sort_values("tourney_date").reset_index(drop=True)
 
         rg_mask = melted["tourney_name"].str.contains(
             "Roland Garros|French Open", case=False, na=False
@@ -258,18 +254,22 @@ class FeatureBuilder:
         opponent_id: str,
         match_date: pd.Timestamp,
     ) -> dict:
-        """Head-to-head record with Laplace smoothing."""
-        h2h = self._h2h_data.get((player_id, opponent_id))
-        if h2h is None or len(h2h) == 0:
-            return {
-                "h2h_wins": 0,
-                "h2h_total": 0,
-                "h2h_win_pct": LAPLACE_PRIOR / (2 * LAPLACE_PRIOR),
-            }
+        """Head-to-head record with Laplace smoothing, derived from player index."""
+        no_history = {
+            "h2h_wins": 0,
+            "h2h_total": 0,
+            "h2h_win_pct": LAPLACE_PRIOR / (2 * LAPLACE_PRIOR),
+        }
+        history = self._get_history_before(player_id, match_date)
+        if len(history) == 0:
+            return no_history
 
-        before = h2h.loc[h2h["tourney_date"] < match_date]
-        wins = int(before["won"].sum())
-        total = len(before)
+        vs_opponent = history.loc[history["opponent_id"] == opponent_id]
+        if len(vs_opponent) == 0:
+            return no_history
+
+        wins = int(vs_opponent["won"].sum())
+        total = len(vs_opponent)
         smoothed = (wins + LAPLACE_PRIOR) / (total + 2 * LAPLACE_PRIOR)
         return {"h2h_wins": wins, "h2h_total": total, "h2h_win_pct": smoothed}
 
